@@ -15,6 +15,7 @@ import (
 type preconditionChecker struct {
 	component                string
 	encryptionSecretSelector labels.Selector
+	allowKMS                 bool
 
 	secretLister          corev1listers.SecretNamespaceLister
 	apiServerConfigLister configv1listers.APIServerLister
@@ -22,7 +23,7 @@ type preconditionChecker struct {
 
 // newEncryptionEnabledPrecondition determines if encryption controllers should synchronise.
 // It uses the cache for gathering data to avoid sending requests to the API servers.
-func newEncryptionEnabledPrecondition(apiServerConfigLister configv1listers.APIServerLister, kubeInformersForNamespaces operatorv1helpers.KubeInformersForNamespaces, encryptionSecretSelectorString, component string) (*preconditionChecker, error) {
+func newEncryptionEnabledPrecondition(apiServerConfigLister configv1listers.APIServerLister, kubeInformersForNamespaces operatorv1helpers.KubeInformersForNamespaces, encryptionSecretSelectorString, component string, allowKMS bool) (*preconditionChecker, error) {
 	encryptionSecretSelector, err := labels.Parse(encryptionSecretSelectorString)
 	if err != nil {
 		return nil, err
@@ -30,6 +31,7 @@ func newEncryptionEnabledPrecondition(apiServerConfigLister configv1listers.APIS
 	return &preconditionChecker{
 		component:                component,
 		encryptionSecretSelector: encryptionSecretSelector,
+		allowKMS:                 allowKMS,
 		secretLister:             kubeInformersForNamespaces.SecretLister().Secrets("openshift-config-managed"),
 		apiServerConfigLister:    apiServerConfigLister,
 	}, nil
@@ -69,7 +71,12 @@ func (pc *preconditionChecker) encryptionWasEnabled() (bool, error) {
 		return false, err // unknown error
 	}
 
-	if currentMode := state.Mode(apiServerConfig.Spec.Encryption.Type); len(currentMode) > 0 && currentMode != state.Identity {
+	currentMode := state.Mode(apiServerConfig.Spec.Encryption.Type)
+	if !pc.allowKMS && currentMode == state.KMS {
+		return false, fmt.Errorf("use of KMS is disabled but encryption.type=%q was set", apiServerConfig.Spec.Encryption.Type)
+	}
+
+	if len(currentMode) > 0 && currentMode != state.Identity {
 		return true, nil // encryption might be actually in progress
 	}
 

@@ -61,6 +61,8 @@ const (
 	SecretBox Mode = "secretbox" // available from the first release, see defaultMode below
 	Identity  Mode = "identity"  // available from the first release, see defaultMode below
 
+	KMS Mode = "KMS" // check if we can set this to "kms" in o/api to conform with upstream encryptionConfig
+
 	// Changing this value requires caution to not break downgrades.
 	// Specifically, if some new Mode is released in version X, that new Mode cannot
 	// be used as the defaultMode until version X+1.  Thus on a downgrade the operator
