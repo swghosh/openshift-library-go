@@ -32,6 +32,8 @@ func TestEncryptionEnabledPrecondition(t *testing.T) {
 		existingSecret                 runtime.Object
 		expectedPreconditionsToBeReady bool
 		expectError                    bool
+
+		kmsFeatureGate bool // disabled by default
 	}{
 
 		// scenario 1
@@ -72,6 +74,22 @@ func TestEncryptionEnabledPrecondition(t *testing.T) {
 			},
 			expectedPreconditionsToBeReady: true,
 		},
+
+		// scenario 6: KMS enabled
+		{
+			name:                           "encryption on, currentMode set to KMS",
+			encryptionType:                 configv1.EncryptionTypeKMS,
+			kmsFeatureGate:                 true,
+			expectedPreconditionsToBeReady: true,
+		},
+
+		// scenario 7: KMS enabled but disabled through Feature Gate
+		{
+			name:           "encryption off with currentMode set to KMS but disabled by feature gate",
+			encryptionType: configv1.EncryptionTypeKMS,
+			kmsFeatureGate: false,
+			expectError:    true,
+		},
 	}
 
 	for _, scenario := range scenarios {
@@ -88,7 +106,7 @@ func TestEncryptionEnabledPrecondition(t *testing.T) {
 			namespacedSecretLister := corev1listers.NewSecretLister(secretsIndexer).Secrets("openshift-config-managed")
 
 			// act
-			target := &preconditionChecker{component: component, encryptionSecretSelector: encryptionSecretSelector, secretLister: namespacedSecretLister, apiServerConfigLister: apiServerConfigLister}
+			target := &preconditionChecker{component: component, encryptionSecretSelector: encryptionSecretSelector, secretLister: namespacedSecretLister, apiServerConfigLister: apiServerConfigLister, allowKMS: scenario.kmsFeatureGate}
 			preconditionsReady, err := target.PreconditionFulfilled()
 
 			// validate
