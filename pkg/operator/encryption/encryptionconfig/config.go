@@ -16,6 +16,9 @@ import (
 
 var (
 	emptyStaticIdentityKey = base64.StdEncoding.EncodeToString(crypto.NewIdentityKey())
+
+	// allowKMS toggles kms usage at runtime, disabled by default
+	allowKMS = false
 )
 
 // FromEncryptionState converts state to config.
@@ -106,6 +109,12 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 					Mode: s,
 				}
 
+			case allowKMS && provider.KMS != nil:
+				ks = state.KeyState{
+					Mode:   state.KMS,
+					Backed: false,
+				}
+
 			default:
 				klog.Infof("skipping invalid provider index %d for resource %s", i, resourceConfig.Resources[0])
 				continue // should never happen
@@ -119,7 +128,7 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 				}
 			}
 
-			if i == 0 || (ks.Mode == state.Identity && !grState.HasWriteKey()) {
+			if i == 0 || (ks.Mode == state.Identity && !grState.HasWriteKey()) || (allowKMS && ks.Mode == state.KMS) {
 				grState.WriteKey = ks
 			}
 

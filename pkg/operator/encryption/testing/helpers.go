@@ -243,6 +243,17 @@ func createProviderCfg(mode string, key apiserverconfigv1.Key) *apiserverconfigv
 		return &apiserverconfigv1.ProviderConfiguration{
 			Identity: &apiserverconfigv1.IdentityConfiguration{},
 		}
+	case "KMS":
+		return &apiserverconfigv1.ProviderConfiguration{
+			KMS: &apiserverconfigv1.KMSConfiguration{
+				APIVersion: "v2",
+				Name:       "cloud-kms",
+				Endpoint:   "unix:///var/kms/plugin.sock",
+				Timeout: &metav1.Duration{
+					Duration: 5 * time.Second,
+				},
+			},
+		}
 	default:
 		return &apiserverconfigv1.ProviderConfiguration{
 			AESCBC: &apiserverconfigv1.AESConfiguration{

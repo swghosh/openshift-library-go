@@ -361,8 +361,65 @@ func TestToEncryptionState(t *testing.T) {
 				},
 			},
 		},
+
+		// feature-gated KMS (external managed keys)
+
+		// scenario 11
+		{
+			name: "KMS enabled",
+			input: func() *apiserverconfigv1.EncryptionConfiguration {
+				keysRes := encryptiontesting.EncryptionKeysResourceTuple{
+					Resource: "secrets",
+					Keys:     []apiserverconfigv1.Key{{}},
+					Modes:    []string{"KMS"},
+				}
+				ec := encryptiontesting.CreateEncryptionCfgWithWriteKey([]encryptiontesting.EncryptionKeysResourceTuple{keysRes})
+				return ec
+			}(),
+			output: map[schema.GroupResource]state.GroupResourceState{
+				{Group: "", Resource: "secrets"}: {
+					WriteKey: state.KeyState{
+						Mode: state.KMS,
+					},
+					ReadKeys: []state.KeyState{
+						{Mode: state.KMS},
+					},
+				},
+			},
+		},
+		// scenario 12
+		{
+			name: "KMS enabled after aescbc",
+			input: func() *apiserverconfigv1.EncryptionConfiguration {
+				keysRes := encryptiontesting.EncryptionKeysResourceTuple{
+					Resource: "secrets",
+					Keys: []apiserverconfigv1.Key{
+						{},
+						{
+							Name:   "34",
+							Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc=",
+						},
+					},
+					Modes: []string{"KMS", "aescbc"},
+				}
+				ec := encryptiontesting.CreateEncryptionCfgWithWriteKey([]encryptiontesting.EncryptionKeysResourceTuple{keysRes})
+				return ec
+			}(),
+			output: map[schema.GroupResource]state.GroupResourceState{
+				{Group: "", Resource: "secrets"}: {
+					WriteKey: state.KeyState{
+						Mode: state.KMS,
+					},
+					ReadKeys: []state.KeyState{
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Mode: state.KMS},
+					},
+				},
+			},
+		},
 	}
 
+	allowKMS = true
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
 			actualOutput, _ := ToEncryptionState(scenario.input, nil)

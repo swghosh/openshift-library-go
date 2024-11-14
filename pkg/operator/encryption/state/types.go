@@ -33,7 +33,8 @@ type KeyState struct {
 	Key  apiserverconfigv1.Key
 	Mode Mode
 
-	// described whether it is backed by a secret.
+	// described whether it is backed by a secret,
+	// external KMS keys are not backed
 	Backed   bool
 	Migrated MigrationState
 	// some controller logic caused this secret to be created by the key controller.
