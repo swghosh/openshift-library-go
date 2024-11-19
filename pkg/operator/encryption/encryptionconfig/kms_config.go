@@ -38,5 +38,5 @@ func resourceHash(grs ...schema.GroupResource) string {
 
 // generateKMSKeyName generates key name for current kms provider
 func generateKMSKeyName(prefix string, gr schema.GroupResource) string {
-	return strings.Join([]string{prefix, "ext-kms", resourceHash(gr)}, "-")
+	return fmt.Sprintf("%s-%s", prefix, resourceHash(gr))
 }

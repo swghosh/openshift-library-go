@@ -22,6 +22,7 @@ import (
 
 const (
 	encryptionSecretKeyDataForTest           = "encryption.apiserver.operator.openshift.io-key"
+	encryptionSecretKMSKeyNameDataForTest    = "encryption.apiserver.operator.openshift.io-kms-key-name"
 	encryptionSecretMigratedTimestampForTest = "encryption.apiserver.operator.openshift.io/migrated-timestamp"
 	encryptionSecretMigratedResourcesForTest = "encryption.apiserver.operator.openshift.io/migrated-resources"
 )
@@ -69,6 +70,13 @@ func CreateEncryptionKeySecretWithRawKey(targetNS string, grs []schema.GroupReso
 func CreateEncryptionKeySecretWithRawKeyWithMode(targetNS string, grs []schema.GroupResource, keyID uint64, rawKey []byte, mode string) *corev1.Secret {
 	secret := CreateEncryptionKeySecretNoDataWithMode(targetNS, grs, keyID, mode)
 	secret.Data[encryptionSecretKeyDataForTest] = rawKey
+	return secret
+}
+
+func CreateEncryptionKeySecretForKMS(targetNS string, grs []schema.GroupResource, keyID uint64, mode string) *corev1.Secret {
+	secret := CreateEncryptionKeySecretNoDataWithMode(targetNS, grs, keyID, mode)
+	secret.Data[encryptionSecretKeyDataForTest] = []byte("")
+	secret.Data[encryptionSecretKMSKeyNameDataForTest] = []byte("cloud-kms")
 	return secret
 }
 

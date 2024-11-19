@@ -26,7 +26,7 @@ type GroupResourceState struct {
 }
 
 func (k GroupResourceState) HasWriteKey() bool {
-	return len(k.WriteKey.Key.Name) > 0 && len(k.WriteKey.Key.Secret) > 0
+	return (len(k.WriteKey.Key.Name) > 0 && len(k.WriteKey.Key.Secret) > 0) || k.WriteKey.KMSKeyName != ""
 }
 
 type KeyState struct {

@@ -4,10 +4,12 @@ import (
 	"encoding/base64"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/apiserver/v1"
 
@@ -379,10 +381,11 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Mode: state.KMS,
+						Mode:       state.KMS,
+						KMSKeyName: "cloud-kms",
 					},
 					ReadKeys: []state.KeyState{
-						{Mode: state.KMS},
+						{Mode: state.KMS, KMSKeyName: "cloud-kms"},
 					},
 				},
 			},
@@ -408,11 +411,12 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Mode: state.KMS,
+						Mode:       state.KMS,
+						KMSKeyName: "cloud-kms",
 					},
 					ReadKeys: []state.KeyState{
 						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
-						{Mode: state.KMS},
+						{Mode: state.KMS, KMSKeyName: "cloud-kms"},
 					},
 				},
 			},
@@ -582,12 +586,41 @@ func TestFromEncryptionState(t *testing.T) {
 
 		// scenario 7
 		{
-			name:     "turn on KMS for single resource",
-			grs:      []schema.GroupResource{{Group: "", Resource: "secrets"}},
-			targetNs: "ext-kms",
+			name:       "turn on KMS for single resource",
+			grs:        []schema.GroupResource{{Group: "", Resource: "secrets"}},
+			targetNs:   "kms",
+			writeKeyIn: encryptiontesting.CreateEncryptionKeySecretForKMS("kms", []schema.GroupResource{{Group: "", Resource: "secrets"}}, 1, "KMS"),
+			readKeysIn: []*corev1.Secret{
+				encryptiontesting.CreateEncryptionKeySecretForKMS("kms", []schema.GroupResource{{Group: "", Resource: "secrets"}}, 1, "KMS"),
+			},
+			makeOutput: func(writeKey *corev1.Secret, readKeys []*corev1.Secret) []apiserverconfigv1.ResourceConfiguration {
+				rs := apiserverconfigv1.ResourceConfiguration{}
+				rs.Resources = []string{"secrets"}
+				rs.Providers = []apiserverconfigv1.ProviderConfiguration{
+					{
+						KMS: &apiserverconfigv1.KMSConfiguration{
+							APIVersion: "v2",
+							Name:       "cloud-kms-b7d9e546",
+							Endpoint:   "unix:///var/kms-plugin/socket.sock",
+							Timeout:    &metav1.Duration{Duration: 5 * time.Second},
+						},
+					}, // TODO: fix multiple providers, use a keyID to distinguish same writeKey and readKeys
+					{
+						KMS: &apiserverconfigv1.KMSConfiguration{
+							APIVersion: "v2",
+							Name:       "cloud-kms-b7d9e546",
+							Endpoint:   "unix:///var/kms-plugin/socket.sock",
+							Timeout:    &metav1.Duration{Duration: 5 * time.Second},
+						},
+					},
+					{Identity: &apiserverconfigv1.IdentityConfiguration{}},
+				}
+				return []apiserverconfigv1.ResourceConfiguration{rs}
+			},
 		},
 	}
 
+	AllowKMS = true
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
 

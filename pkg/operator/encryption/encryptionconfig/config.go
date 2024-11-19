@@ -216,7 +216,7 @@ func stateToProviders(gr schema.GroupResource, desired state.GroupResourceState)
 			providers = append(providers, apiserverconfigv1.ProviderConfiguration{
 				KMS: &apiserverconfigv1.KMSConfiguration{
 					APIVersion: "v2",
-					Name:       generateKMSKeyName("", gr),
+					Name:       generateKMSKeyName("cloud-kms", gr),
 
 					// TODO: fixed values today, in the future we can support tweaking them..
 					Endpoint: KMSPluginEndpoint,
