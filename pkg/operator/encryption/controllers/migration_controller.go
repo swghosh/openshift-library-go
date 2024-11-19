@@ -73,7 +73,6 @@ type migrationController struct {
 
 func NewMigrationController(
 	instanceName string,
-	allowKMS bool,
 	provider Provider,
 	deployer statemachine.Deployer,
 	preconditionsFulfilledFn preconditionsFulfilled,
@@ -87,7 +86,6 @@ func NewMigrationController(
 ) factory.Controller {
 	c := &migrationController{
 		instanceName: instanceName,
-		allowKMS:     allowKMS,
 
 		controllerInstanceName: factory.ControllerInstanceName(instanceName, "EncryptionMigration"),
 		operatorClient:         operatorClient,

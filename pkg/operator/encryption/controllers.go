@@ -106,7 +106,6 @@ func NewControllers(
 		),
 		controllers.NewMigrationController(
 			component,
-			allowKMS,
 			provider,
 			deployer,
 			encryptionEnabledChecker.PreconditionFulfilled,
@@ -120,7 +119,6 @@ func NewControllers(
 		),
 		controllers.NewConditionController(
 			component,
-			allowKMS,
 			provider,
 			deployer,
 			encryptionEnabledChecker.PreconditionFulfilled,

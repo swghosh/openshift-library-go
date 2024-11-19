@@ -39,7 +39,6 @@ type conditionController struct {
 
 func NewConditionController(
 	instanceName string,
-	allowKMS bool,
 	provider Provider,
 	deployer statemachine.Deployer,
 	preconditionsFulfilledFn preconditionsFulfilled,
@@ -54,7 +53,6 @@ func NewConditionController(
 		controllerInstanceName: factory.ControllerInstanceName(instanceName, "EncryptionCondition"),
 		operatorClient:         operatorClient,
 
-		allowKMS:                 allowKMS,
 		encryptionSecretSelector: encryptionSecretSelector,
 		deployer:                 deployer,
 		provider:                 provider,

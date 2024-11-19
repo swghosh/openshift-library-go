@@ -292,6 +292,11 @@ func (c *keyController) getCurrentModeAndExternalReason(ctx context.Context) (st
 	switch currentMode := state.Mode(apiServer.Spec.Encryption.Type); currentMode {
 	case state.AESCBC, state.AESGCM, state.Identity: // secretbox is disabled for now
 		return currentMode, reason, nil
+	case state.KMS:
+		if !c.allowKMS {
+			return "", "", fmt.Errorf("encryption mode configured: %s but KMS support is disabled", currentMode)
+		}
+		return currentMode, reason, nil
 	case "": // unspecified means use the default (which can change over time)
 		return state.DefaultMode, reason, nil
 	default:

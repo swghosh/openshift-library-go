@@ -76,6 +76,7 @@ func NewStateController(
 		preconditionsFulfilledFn: preconditionsFulfilledFn,
 	}
 
+	encryptionconfig.AllowKMS = allowKMS
 	return factory.New().ResyncEvery(time.Minute).WithSync(c.sync).WithControllerInstanceName(c.controllerInstanceName).WithInformers(
 		operatorClient.Informer(),
 		kubeInformersForNamespaces.InformersFor("openshift-config-managed").Core().V1().Secrets().Informer(),
