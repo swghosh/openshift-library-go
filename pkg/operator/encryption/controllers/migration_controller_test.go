@@ -651,6 +651,7 @@ func TestMigrationController(t *testing.T) {
 			// act
 			target := NewMigrationController(
 				"kms",
+				false,
 				provider,
 				deployer,
 				alwaysFulfilledPreconditions,

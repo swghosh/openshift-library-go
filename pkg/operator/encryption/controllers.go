@@ -49,6 +49,9 @@ func NewControllers(
 		return nil, err
 	}
 
+	// at runtime set if KMS configs are supposed to be enabled or not
+	encryptionconfig.AllowKMS = allowKMS
+
 	// for testing resourceSyncer might be nil
 	if resourceSyncer != nil {
 		if err := resourceSyncer.SyncSecretConditionally(
@@ -64,6 +67,7 @@ func NewControllers(
 		controllers.NewKeyController(
 			component,
 			unsupportedConfigPrefix,
+			allowKMS,
 			provider,
 			deployer,
 			encryptionEnabledChecker.PreconditionFulfilled,
@@ -77,6 +81,7 @@ func NewControllers(
 		),
 		controllers.NewStateController(
 			component,
+			allowKMS,
 			provider,
 			deployer,
 			encryptionEnabledChecker.PreconditionFulfilled,
@@ -101,6 +106,7 @@ func NewControllers(
 		),
 		controllers.NewMigrationController(
 			component,
+			allowKMS,
 			provider,
 			deployer,
 			encryptionEnabledChecker.PreconditionFulfilled,
@@ -114,6 +120,7 @@ func NewControllers(
 		),
 		controllers.NewConditionController(
 			component,
+			allowKMS,
 			provider,
 			deployer,
 			encryptionEnabledChecker.PreconditionFulfilled,

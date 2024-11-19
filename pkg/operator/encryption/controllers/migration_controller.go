@@ -62,6 +62,7 @@ type migrationController struct {
 	secretClient   corev1client.SecretsGetter
 
 	preRunCachesSynced       []cache.InformerSynced
+	allowKMS                 bool
 	encryptionSecretSelector metav1.ListOptions
 
 	deployer                 statemachine.Deployer
@@ -72,6 +73,7 @@ type migrationController struct {
 
 func NewMigrationController(
 	instanceName string,
+	allowKMS bool,
 	provider Provider,
 	deployer statemachine.Deployer,
 	preconditionsFulfilledFn preconditionsFulfilled,
@@ -84,7 +86,9 @@ func NewMigrationController(
 	eventRecorder events.Recorder,
 ) factory.Controller {
 	c := &migrationController{
-		instanceName:           instanceName,
+		instanceName: instanceName,
+		allowKMS:     allowKMS,
+
 		controllerInstanceName: factory.ControllerInstanceName(instanceName, "EncryptionMigration"),
 		operatorClient:         operatorClient,
 

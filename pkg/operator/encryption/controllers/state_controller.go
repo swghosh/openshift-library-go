@@ -40,6 +40,7 @@ const stateWorkKey = "key"
 type stateController struct {
 	instanceName             string
 	controllerInstanceName   string
+	allowKMS                 bool
 	encryptionSecretSelector metav1.ListOptions
 
 	operatorClient           operatorv1helpers.OperatorClient
@@ -51,6 +52,7 @@ type stateController struct {
 
 func NewStateController(
 	instanceName string,
+	allowKMS bool,
 	provider Provider,
 	deployer statemachine.Deployer,
 	preconditionsFulfilledFn preconditionsFulfilled,
@@ -64,6 +66,7 @@ func NewStateController(
 	c := &stateController{
 		operatorClient:         operatorClient,
 		instanceName:           instanceName,
+		allowKMS:               allowKMS,
 		controllerInstanceName: factory.ControllerInstanceName(instanceName, "EncryptionState"),
 
 		encryptionSecretSelector: encryptionSecretSelector,

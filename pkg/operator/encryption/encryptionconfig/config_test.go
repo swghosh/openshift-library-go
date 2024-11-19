@@ -419,7 +419,7 @@ func TestToEncryptionState(t *testing.T) {
 		},
 	}
 
-	allowKMS = true
+	AllowKMS = true
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
 			actualOutput, _ := ToEncryptionState(scenario.input, nil)
@@ -579,6 +579,13 @@ func TestFromEncryptionState(t *testing.T) {
 
 		// scenario 6
 		// TODO: encryption on after being off
+
+		// scenario 7
+		{
+			name:     "turn on KMS for single resource",
+			grs:      []schema.GroupResource{{Group: "", Resource: "secrets"}},
+			targetNs: "ext-kms",
+		},
 	}
 
 	for _, scenario := range scenarios {

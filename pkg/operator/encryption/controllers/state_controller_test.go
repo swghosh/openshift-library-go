@@ -757,6 +757,7 @@ func TestStateController(t *testing.T) {
 
 			target := NewStateController(
 				scenario.targetNamespace,
+				false,
 				provider,
 				deployer,
 				alwaysFulfilledPreconditions,

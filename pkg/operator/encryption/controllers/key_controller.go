@@ -65,6 +65,7 @@ type keyController struct {
 
 	controllerInstanceName   string
 	instanceName             string
+	allowKMS                 bool
 	encryptionSecretSelector metav1.ListOptions
 
 	deployer                 statemachine.Deployer
@@ -78,6 +79,7 @@ type keyController struct {
 func NewKeyController(
 	instanceName string,
 	unsupportedConfigPrefix []string,
+	allowKMS bool,
 	provider Provider,
 	deployer statemachine.Deployer,
 	preconditionsFulfilledFn preconditionsFulfilled,
@@ -94,6 +96,7 @@ func NewKeyController(
 		apiServerClient: apiServerClient,
 
 		instanceName:            instanceName,
+		allowKMS:                allowKMS,
 		controllerInstanceName:  factory.ControllerInstanceName(instanceName, "EncryptionKey"),
 		unsupportedConfigPrefix: unsupportedConfigPrefix,
 

@@ -33,14 +33,16 @@ type KeyState struct {
 	Key  apiserverconfigv1.Key
 	Mode Mode
 
-	// described whether it is backed by a secret,
-	// external KMS keys are not backed
+	// described whether it is backed by a secret.
 	Backed   bool
 	Migrated MigrationState
 	// some controller logic caused this secret to be created by the key controller.
 	InternalReason string
 	// the user via unsupportConfigOverrides.encryption.reason triggered this key.
 	ExternalReason string
+
+	// only used when a KMS provider is used
+	KMSKeyName string
 }
 
 type MigrationState struct {
