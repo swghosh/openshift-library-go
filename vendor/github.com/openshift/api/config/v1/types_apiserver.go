@@ -157,7 +157,7 @@ type APIServerServingCerts struct {
 	// If no named certificates are provided, or no named certificates match the server name as understood by a client,
 	// the defaultServingCertificate will be used.
 	// +optional
-	// +listType=set
+	// +listType=atomic
 	NamedCertificates []APIServerNamedServingCert `json:"namedCertificates,omitempty"`
 }
 

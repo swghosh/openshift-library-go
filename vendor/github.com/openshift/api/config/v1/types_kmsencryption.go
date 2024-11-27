@@ -30,18 +30,21 @@ type AWSKMSConfig struct {
 	// - `<key_id>` is a unique identifier for the KMS key, consisting of lowercase hexadecimal characters and hyphens.
 	//
 	// +kubebuilder:validation:Required
-	// +kubebuilder:validation:XValidation:rule="self.matches('^arn:aws:kms:[a-z0-9-]+:[0-9]{12}:key/[a-f0-9-]+$') && self.size() <= 128",message="keyARN must follow the format `arn:aws:kms:<region>:<account_id>:key/<key_id>`. The account ID must be a 12 digit number and the region and key ID should consist only of lowercase hexadecimal characters and hyphens (-)."
+	// +kubebuilder:validation:MaxLength=128
+	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:validation:XValidation:rule="self.matches('^arn:aws:kms:[a-z0-9-]+:[0-9]{12}:key/[a-f0-9-]+$')",message="keyARN must follow the format `arn:aws:kms:<region>:<account_id>:key/<key_id>`. The account ID must be a 12 digit number and the region and key ID should consist only of lowercase hexadecimal characters and hyphens (-)."
 	KeyARN string `json:"keyARN"`
-	// region specifies the AWS region where the KMS intance exists, and follows the format
+	// region specifies the AWS region where the KMS instance exists, and follows the format
 	// `<region-prefix>-<region-name>-<number>`, e.g.: `us-east-1`.
 	// Only lowercase letters and hyphens followed by numbers are allowed.
 	//
-	// +kubebuilder:validation:XValidation:rule="self.matches('^[a-z]{2}-[a-z]+-[0-9]+$') && self.size() <= 64",message="region must be a valid AWS region"
+	// +kubebuilder:validation:MaxLength=64
+	// +kubebuilder:validation:MinLength=1
 	Region string `json:"region"`
 }
 
 // KMSProviderType is a specific supported KMS provider
-// +kubebuilder:validation:Enum="";AWS
+// +kubebuilder:validation:Enum=AWS
 type KMSProviderType string
 
 const (

@@ -774,11 +774,12 @@ func (PromQLClusterCondition) SwaggerDoc() map[string]string {
 }
 
 var map_Release = map[string]string{
-	"":         "Release represents an OpenShift release image and associated metadata.",
-	"version":  "version is a semantic version identifying the update version. When this field is part of spec, version is optional if image is specified.",
-	"image":    "image is a container image location that contains the update. When this field is part of spec, image is optional if version is specified and the availableUpdates field contains a matching version.",
-	"url":      "url contains information about this release. This URL is set by the 'url' metadata property on a release or the metadata returned by the update API and should be displayed as a link in user interfaces. The URL field may not be set for test or nightly releases.",
-	"channels": "channels is the set of Cincinnati channels to which the release currently belongs.",
+	"":             "Release represents an OpenShift release image and associated metadata.",
+	"architecture": "architecture is an optional field that indicates the value of the cluster architecture. In this context cluster architecture means either a single architecture or a multi architecture. Valid values are 'Multi' and empty.",
+	"version":      "version is a semantic version identifying the update version. When this field is part of spec, version is optional if image is specified.",
+	"image":        "image is a container image location that contains the update. When this field is part of spec, image is optional if version is specified and the availableUpdates field contains a matching version.",
+	"url":          "url contains information about this release. This URL is set by the 'url' metadata property on a release or the metadata returned by the update API and should be displayed as a link in user interfaces. The URL field may not be set for test or nightly releases.",
+	"channels":     "channels is the set of Cincinnati channels to which the release currently belongs.",
 }
 
 func (Release) SwaggerDoc() map[string]string {
@@ -1521,7 +1522,7 @@ var map_NutanixFailureDomain = map[string]string{
 	"":        "NutanixFailureDomain configures failure domain information for the Nutanix platform.",
 	"name":    "name defines the unique name of a failure domain. Name is required and must be at most 64 characters in length. It must consist of only lower case alphanumeric characters and hyphens (-). It must start and end with an alphanumeric character. This value is arbitrary and is used to identify the failure domain within the platform.",
 	"cluster": "cluster is to identify the cluster (the Prism Element under management of the Prism Central), in which the Machine's VM will be created. The cluster identifier (uuid or name) can be obtained from the Prism Central console or using the prism_central API.",
-	"subnets": "subnets holds a list of identifiers (one or more) of the cluster's network subnets for the Machine's VM to connect to. The subnet identifiers (uuid or name) can be obtained from the Prism Central console or using the prism_central API.",
+	"subnets": "subnets holds a list of identifiers (one or more) of the cluster's network subnets If the feature gate NutanixMultiSubnets is enabled, up to 32 subnets may be configured. for the Machine's VM to connect to. The subnet identifiers (uuid or name) can be obtained from the Prism Central console or using the prism_central API.",
 }
 
 func (NutanixFailureDomain) SwaggerDoc() map[string]string {
@@ -1934,7 +1935,7 @@ func (LoadBalancer) SwaggerDoc() map[string]string {
 var map_AWSKMSConfig = map[string]string{
 	"":       "AWSKMSConfig defines the KMS config specific to AWS KMS provider",
 	"keyARN": "keyARN specifies the Amazon Resource Name (ARN) of the AWS KMS key used for encryption. The value must adhere to the format `arn:aws:kms:<region>:<account_id>:key/<key_id>`, where: - `<region>` is the AWS region consisting of lowercase letters and hyphens followed by a number. - `<account_id>` is a 12-digit numeric identifier for the AWS account. - `<key_id>` is a unique identifier for the KMS key, consisting of lowercase hexadecimal characters and hyphens.",
-	"region": "region specifies the AWS region where the KMS intance exists, and follows the format `<region-prefix>-<region-name>-<number>`, e.g.: `us-east-1`. Only lowercase letters and hyphens followed by numbers are allowed.",
+	"region": "region specifies the AWS region where the KMS instance exists, and follows the format `<region-prefix>-<region-name>-<number>`, e.g.: `us-east-1`. Only lowercase letters and hyphens followed by numbers are allowed.",
 }
 
 func (AWSKMSConfig) SwaggerDoc() map[string]string {
