@@ -423,7 +423,6 @@ func TestToEncryptionState(t *testing.T) {
 		},
 	}
 
-	AllowKMS = true
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
 			actualOutput, _ := ToEncryptionState(scenario.input, nil)
@@ -620,7 +619,6 @@ func TestFromEncryptionState(t *testing.T) {
 		},
 	}
 
-	AllowKMS = true
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
 

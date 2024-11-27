@@ -17,9 +17,6 @@ import (
 
 var (
 	emptyStaticIdentityKey = base64.StdEncoding.EncodeToString(crypto.NewIdentityKey())
-
-	// AllowKMS toggles kms usage at runtime, disabled by default
-	AllowKMS = false
 )
 
 // FromEncryptionState converts state to config.
@@ -110,7 +107,7 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 					Mode: s,
 				}
 
-			case AllowKMS && provider.KMS != nil:
+			case provider.KMS != nil:
 				// only KMSv2 is allowed
 				if provider.KMS.APIVersion != "v2" {
 					klog.Infof("skipping invalid KMS provider with APIVersion %s, expected KMS v2", provider.KMS.APIVersion)
@@ -135,7 +132,7 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 				}
 			}
 
-			if i == 0 || (ks.Mode == state.Identity && !grState.HasWriteKey()) || (AllowKMS && ks.Mode == state.KMS) {
+			if i == 0 || (ks.Mode == state.Identity && !grState.HasWriteKey()) || ks.Mode == state.KMS {
 				grState.WriteKey = ks
 			}
 
@@ -209,10 +206,6 @@ func stateToProviders(gr schema.GroupResource, desired state.GroupResourceState)
 				},
 			})
 		case state.KMS:
-			if !AllowKMS {
-				klog.Infof("key of type KMS detected, skipping... KMS support needs to enabled first")
-			}
-
 			providers = append(providers, apiserverconfigv1.ProviderConfiguration{
 				KMS: &apiserverconfigv1.KMSConfiguration{
 					APIVersion: "v2",
