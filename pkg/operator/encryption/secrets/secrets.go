@@ -83,7 +83,7 @@ func ToKeyState(s *corev1.Secret) (state.KeyState, error) {
 	return key, nil
 }
 
-// ToKeyState converts a key state to a key secret.
+// FromKeyState converts a key state to a key secret.
 func FromKeyState(component string, ks state.KeyState) (*corev1.Secret, error) {
 	bs, err := base64.StdEncoding.DecodeString(ks.Key.Secret)
 	if err != nil {
@@ -125,6 +125,7 @@ func FromKeyState(component string, ks state.KeyState) (*corev1.Secret, error) {
 	}
 
 	if ks.Mode == state.KMS {
+		s.Name = fmt.Sprintf("encryption-key-%s-%s", component, ks.KMSKeyName)
 		s.Data[EncryptionSecretKMSKeyName] = []byte(ks.KMSKeyName)
 	}
 
