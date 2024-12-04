@@ -28,7 +28,6 @@ type conditionController struct {
 	controllerInstanceName string
 	operatorClient         operatorv1helpers.OperatorClient
 
-	allowKMS                 bool
 	encryptionSecretSelector metav1.ListOptions
 
 	deployer                 statemachine.Deployer

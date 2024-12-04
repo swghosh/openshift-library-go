@@ -65,7 +65,6 @@ type keyController struct {
 
 	controllerInstanceName   string
 	instanceName             string
-	allowKMS                 bool
 	encryptionSecretSelector metav1.ListOptions
 
 	deployer                 statemachine.Deployer
@@ -79,7 +78,6 @@ type keyController struct {
 func NewKeyController(
 	instanceName string,
 	unsupportedConfigPrefix []string,
-	allowKMS bool,
 	provider Provider,
 	deployer statemachine.Deployer,
 	preconditionsFulfilledFn preconditionsFulfilled,
@@ -96,7 +94,6 @@ func NewKeyController(
 		apiServerClient: apiServerClient,
 
 		instanceName:            instanceName,
-		allowKMS:                allowKMS,
 		controllerInstanceName:  factory.ControllerInstanceName(instanceName, "EncryptionKey"),
 		unsupportedConfigPrefix: unsupportedConfigPrefix,
 
@@ -290,12 +287,7 @@ func (c *keyController) getCurrentModeAndExternalReason(ctx context.Context) (st
 
 	reason := encryptionConfig.Encryption.Reason
 	switch currentMode := state.Mode(apiServer.Spec.Encryption.Type); currentMode {
-	case state.AESCBC, state.AESGCM, state.Identity: // secretbox is disabled for now
-		return currentMode, reason, nil
-	case state.KMS:
-		if !c.allowKMS {
-			return "", "", fmt.Errorf("encryption mode configured: %s but KMS support is disabled", currentMode)
-		}
+	case state.AESCBC, state.AESGCM, state.KMS, state.Identity: // secretbox is disabled for now
 		return currentMode, reason, nil
 	case "": // unspecified means use the default (which can change over time)
 		return state.DefaultMode, reason, nil

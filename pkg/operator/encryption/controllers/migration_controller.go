@@ -62,7 +62,6 @@ type migrationController struct {
 	secretClient   corev1client.SecretsGetter
 
 	preRunCachesSynced       []cache.InformerSynced
-	allowKMS                 bool
 	encryptionSecretSelector metav1.ListOptions
 
 	deployer                 statemachine.Deployer

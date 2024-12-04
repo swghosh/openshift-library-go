@@ -40,7 +40,6 @@ const stateWorkKey = "key"
 type stateController struct {
 	instanceName             string
 	controllerInstanceName   string
-	allowKMS                 bool
 	encryptionSecretSelector metav1.ListOptions
 
 	operatorClient           operatorv1helpers.OperatorClient
@@ -52,7 +51,6 @@ type stateController struct {
 
 func NewStateController(
 	instanceName string,
-	allowKMS bool,
 	provider Provider,
 	deployer statemachine.Deployer,
 	preconditionsFulfilledFn preconditionsFulfilled,
@@ -66,7 +64,6 @@ func NewStateController(
 	c := &stateController{
 		operatorClient:         operatorClient,
 		instanceName:           instanceName,
-		allowKMS:               allowKMS,
 		controllerInstanceName: factory.ControllerInstanceName(instanceName, "EncryptionState"),
 
 		encryptionSecretSelector: encryptionSecretSelector,
@@ -76,7 +73,6 @@ func NewStateController(
 		preconditionsFulfilledFn: preconditionsFulfilledFn,
 	}
 
-	encryptionconfig.AllowKMS = allowKMS
 	return factory.New().ResyncEvery(time.Minute).WithSync(c.sync).WithControllerInstanceName(c.controllerInstanceName).WithInformers(
 		operatorClient.Informer(),
 		kubeInformersForNamespaces.InformersFor("openshift-config-managed").Core().V1().Secrets().Informer(),

@@ -498,7 +498,6 @@ func (e *encryptionControllerBuilder) build() []controllerWrapper {
 	controllers, err := encryption.NewControllers(
 		e.component,
 		e.unsupportedConfigPrefix,
-		false, // TODO: add a feature gate accessor with a sane value (based on KMSEncryptionProvider feature gate)
 		e.provider,
 		e.deployer,
 		e.migrator,
