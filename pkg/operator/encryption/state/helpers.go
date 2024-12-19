@@ -78,12 +78,12 @@ func EqualKeyAndEqualID(s1, s2 *KeyState) bool {
 		return false
 	}
 
-	if s1.Mode == KMS && s1.KMSKeyId != s2.KMSKeyId {
-		return false
+	if s1.Mode == KMS {
+		return s1.KMSKeyId == s2.KMSKeyId
 	}
 
 	// onwards for non-KMS checks
-	if s1.Mode != KMS && s1.Key.Secret != s2.Key.Secret {
+	if s1.Key.Secret != s2.Key.Secret {
 		return false
 	}
 

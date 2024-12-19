@@ -599,16 +599,7 @@ func TestFromEncryptionState(t *testing.T) {
 				rs := apiserverconfigv1.ResourceConfiguration{}
 				rs.Resources = []string{"secrets"}
 
-				// TODO(swghosh): this is buggy, we should have only one KMS EncryptionProvider for a single KMSKeyId??
 				rs.Providers = []apiserverconfigv1.ProviderConfiguration{
-					{
-						KMS: &apiserverconfigv1.KMSConfiguration{
-							APIVersion: "v2",
-							Name:       "kms-cloud-foo-b7d9e546",
-							Endpoint:   "unix:///var/kube-kms/cloud-foo/socket.sock",
-							Timeout:    &metav1.Duration{Duration: 5 * time.Second},
-						},
-					},
 					{
 						KMS: &apiserverconfigv1.KMSConfiguration{
 							APIVersion: "v2",
