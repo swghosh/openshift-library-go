@@ -10,6 +10,7 @@ import (
 	v1 "k8s.io/apiserver/pkg/apis/apiserver/v1"
 	"k8s.io/utils/diff"
 
+	configv1 "github.com/openshift/api/config/v1"
 	"github.com/openshift/library-go/pkg/operator/encryption/state"
 )
 
@@ -128,6 +129,8 @@ func TestRoundtrip(t *testing.T) {
 						{Group: "oauth.openshift.io", Resource: "oauthauthorizetokens"},
 					},
 				},
+				KMSKeyId:  "key-hash-foo",
+				KMSConfig: &configv1.KMSConfig{},
 			},
 		},
 	}

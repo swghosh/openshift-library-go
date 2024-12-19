@@ -2,6 +2,7 @@ package encryptionconfig
 
 import (
 	"encoding/base64"
+	"fmt"
 	"sort"
 
 	corev1 "k8s.io/api/core/v1"
@@ -115,8 +116,8 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 				}
 
 				ks = state.KeyState{
-					Mode:       state.KMS,
-					KMSKeyName: provider.KMS.Name,
+					Mode:     state.KMS,
+					KMSKeyId: extractKMSKeyIdFromProviderName(provider.KMS.Name),
 				}
 
 			default:
@@ -132,7 +133,7 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 				}
 			}
 
-			if i == 0 || (ks.Mode == state.Identity && !grState.HasWriteKey()) || ks.Mode == state.KMS {
+			if i == 0 || (ks.Mode == state.Identity && !grState.HasWriteKey()) {
 				grState.WriteKey = ks
 			}
 
@@ -209,10 +210,8 @@ func stateToProviders(gr schema.GroupResource, desired state.GroupResourceState)
 			providers = append(providers, apiserverconfigv1.ProviderConfiguration{
 				KMS: &apiserverconfigv1.KMSConfiguration{
 					APIVersion: "v2",
-					Name:       generateKMSKeyName("cloud-kms", gr),
-
-					// TODO: fixed values today, in the future we can support tweaking them..
-					Endpoint: KMSPluginEndpoint,
+					Name:       generateKMSProviderName(key.KMSKeyId, gr),
+					Endpoint:   fmt.Sprintf(KMSPluginEndpoint, key.KMSKeyId),
 					Timeout: &metav1.Duration{
 						Duration: KMSPluginTimeout,
 					},

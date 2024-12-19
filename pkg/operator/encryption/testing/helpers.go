@@ -22,7 +22,8 @@ import (
 
 const (
 	encryptionSecretKeyDataForTest           = "encryption.apiserver.operator.openshift.io-key"
-	encryptionSecretKMSKeyNameDataForTest    = "encryption.apiserver.operator.openshift.io-kms-key-name"
+	encryptionSecretKMSKeyIdDataForTest      = "encryption.apiserver.operator.openshift.io-kms-key-id"
+	encryptionSecretKMSConfigForTest         = "encryption.apiserver.operator.openshift.io-kms-config"
 	encryptionSecretMigratedTimestampForTest = "encryption.apiserver.operator.openshift.io/migrated-timestamp"
 	encryptionSecretMigratedResourcesForTest = "encryption.apiserver.operator.openshift.io/migrated-resources"
 )
@@ -76,7 +77,8 @@ func CreateEncryptionKeySecretWithRawKeyWithMode(targetNS string, grs []schema.G
 func CreateEncryptionKeySecretForKMS(targetNS string, grs []schema.GroupResource, keyID uint64, mode string) *corev1.Secret {
 	secret := CreateEncryptionKeySecretNoDataWithMode(targetNS, grs, keyID, mode)
 	secret.Data[encryptionSecretKeyDataForTest] = []byte("")
-	secret.Data[encryptionSecretKMSKeyNameDataForTest] = []byte("cloud-kms")
+	secret.Data[encryptionSecretKMSKeyIdDataForTest] = []byte("cloud-foo")
+	secret.Data[encryptionSecretKMSConfigForTest] = []byte("null") // empty kms config
 	return secret
 }
 
@@ -255,8 +257,8 @@ func createProviderCfg(mode string, key apiserverconfigv1.Key) *apiserverconfigv
 		return &apiserverconfigv1.ProviderConfiguration{
 			KMS: &apiserverconfigv1.KMSConfiguration{
 				APIVersion: "v2",
-				Name:       "cloud-kms",
-				Endpoint:   "unix:///var/kms/plugin.sock",
+				Name:       "kms-cloud-foo-b7d9e546",
+				Endpoint:   "unix:///var/kube-kms/cloud-kms-foo/socket.sock",
 				Timeout: &metav1.Duration{
 					Duration: 5 * time.Second,
 				},

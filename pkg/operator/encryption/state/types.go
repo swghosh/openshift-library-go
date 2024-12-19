@@ -5,6 +5,8 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	apiserverconfigv1 "k8s.io/apiserver/pkg/apis/apiserver/v1"
+
+	configv1 "github.com/openshift/api/config/v1"
 )
 
 // These annotations try to scare anyone away from editing the encryption secrets.  It is trivial for
@@ -26,7 +28,7 @@ type GroupResourceState struct {
 }
 
 func (k GroupResourceState) HasWriteKey() bool {
-	return (len(k.WriteKey.Key.Name) > 0 && len(k.WriteKey.Key.Secret) > 0) || k.WriteKey.KMSKeyName != ""
+	return (len(k.WriteKey.Key.Name) > 0 && len(k.WriteKey.Key.Secret) > 0) || k.WriteKey.KMSKeyId != ""
 }
 
 type KeyState struct {
@@ -42,7 +44,8 @@ type KeyState struct {
 	ExternalReason string
 
 	// only used when a KMS provider is used
-	KMSKeyName string
+	KMSKeyId  string
+	KMSConfig *configv1.KMSConfig
 }
 
 type MigrationState struct {

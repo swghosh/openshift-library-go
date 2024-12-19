@@ -381,11 +381,12 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Mode:       state.KMS,
-						KMSKeyName: "cloud-kms",
+						Mode:      state.KMS,
+						KMSKeyId:  "cloud-foo",
+						KMSConfig: nil,
 					},
 					ReadKeys: []state.KeyState{
-						{Mode: state.KMS, KMSKeyName: "cloud-kms"},
+						{Mode: state.KMS, KMSKeyId: "cloud-foo", KMSConfig: nil},
 					},
 				},
 			},
@@ -411,12 +412,13 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Mode:       state.KMS,
-						KMSKeyName: "cloud-kms",
+						Mode:      state.KMS,
+						KMSKeyId:  "cloud-foo",
+						KMSConfig: nil,
 					},
 					ReadKeys: []state.KeyState{
 						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
-						{Mode: state.KMS, KMSKeyName: "cloud-kms"},
+						{Mode: state.KMS, KMSKeyId: "cloud-foo", KMSConfig: nil},
 					},
 				},
 			},
@@ -425,6 +427,7 @@ func TestToEncryptionState(t *testing.T) {
 
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
+			// TODO: add secrets in second argument and test with non-nil KMS config too!
 			actualOutput, _ := ToEncryptionState(scenario.input, nil)
 
 			if len(actualOutput) != len(scenario.output) {
@@ -583,7 +586,7 @@ func TestFromEncryptionState(t *testing.T) {
 		// scenario 6
 		// TODO: encryption on after being off
 
-		// scenario 7
+		// scenario 7: KMS
 		{
 			name:       "turn on KMS for single resource",
 			grs:        []schema.GroupResource{{Group: "", Resource: "secrets"}},
@@ -595,20 +598,22 @@ func TestFromEncryptionState(t *testing.T) {
 			makeOutput: func(writeKey *corev1.Secret, readKeys []*corev1.Secret) []apiserverconfigv1.ResourceConfiguration {
 				rs := apiserverconfigv1.ResourceConfiguration{}
 				rs.Resources = []string{"secrets"}
+
+				// TODO(swghosh): this is buggy, we should have only one KMS EncryptionProvider for a single KMSKeyId??
 				rs.Providers = []apiserverconfigv1.ProviderConfiguration{
 					{
 						KMS: &apiserverconfigv1.KMSConfiguration{
 							APIVersion: "v2",
-							Name:       "cloud-kms-b7d9e546",
-							Endpoint:   "unix:///var/kms-plugin/socket.sock",
+							Name:       "kms-cloud-foo-b7d9e546",
+							Endpoint:   "unix:///var/kube-kms/cloud-foo/socket.sock",
 							Timeout:    &metav1.Duration{Duration: 5 * time.Second},
 						},
-					}, // TODO: fix multiple providers, use a keyID to distinguish same writeKey and readKeys
+					},
 					{
 						KMS: &apiserverconfigv1.KMSConfiguration{
 							APIVersion: "v2",
-							Name:       "cloud-kms-b7d9e546",
-							Endpoint:   "unix:///var/kms-plugin/socket.sock",
+							Name:       "kms-cloud-foo-b7d9e546",
+							Endpoint:   "unix:///var/kube-kms/cloud-foo/socket.sock",
 							Timeout:    &metav1.Duration{Duration: 5 * time.Second},
 						},
 					},

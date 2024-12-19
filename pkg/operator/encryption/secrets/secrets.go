@@ -19,6 +19,7 @@ import (
 
 // ToKeyState converts a key secret to a key state.
 func ToKeyState(s *corev1.Secret) (state.KeyState, error) {
+	// Today, all possible encryption configs are backed by a secret on the cluster.
 	key := state.KeyState{Backed: true}
 
 	if v, ok := s.Annotations[EncryptionSecretMigratedTimestamp]; ok {
@@ -59,14 +60,24 @@ func ToKeyState(s *corev1.Secret) (state.KeyState, error) {
 		return state.KeyState{}, fmt.Errorf("secret %s/%s of mode %q must have non-empty key", s.Namespace, s.Name, keyMode)
 	}
 
-	// kms does not populate keys, only uses kms key name
+	// kms does not populate keys, only uses kms key id and config
 	if keyMode == state.KMS {
-		kmsKeyName, exists := s.Data[EncryptionSecretKMSKeyName]
+		kmsKeyName, exists := s.Data[EncryptionSecretKMSKeyId]
 		if !exists {
-			return state.KeyState{}, fmt.Errorf("secret %s/%s does not contain required data field %q", s.Namespace, s.Name, EncryptionSecretKMSKeyName)
+			return state.KeyState{}, fmt.Errorf("secret %s/%s does not contain required data field %q", s.Namespace, s.Name, EncryptionSecretKMSKeyId)
 		}
+		key.KMSKeyId = string(kmsKeyName)
 
-		key.KMSKeyName = string(kmsKeyName)
+		kmsConfigJsonData, exists := s.Data[EncryptionSecretKMSConfig]
+		if !exists {
+			// in the future, we may allow empty KMS config ambiently inferred from the environment
+			// depending upon the KMS provider, but today we block it!
+			return state.KeyState{}, fmt.Errorf("secret %s/%s does not contain required data field %q", s.Namespace, s.Name, EncryptionSecretKMSConfig)
+		}
+		err := json.Unmarshal(kmsConfigJsonData, &key.KMSConfig)
+		if err != nil {
+			return state.KeyState{}, fmt.Errorf("could not load KMS config from secret %s/%s at data field %q: %v", s.Namespace, s.Name, EncryptionSecretKMSConfig, err)
+		}
 	} else {
 		keyID, validKeyID := state.NameToKeyID(s.Name)
 		if !validKeyID && keyMode != state.KMS {
@@ -125,8 +136,15 @@ func FromKeyState(component string, ks state.KeyState) (*corev1.Secret, error) {
 	}
 
 	if ks.Mode == state.KMS {
-		s.Name = fmt.Sprintf("encryption-key-%s-%s", component, ks.KMSKeyName)
-		s.Data[EncryptionSecretKMSKeyName] = []byte(ks.KMSKeyName)
+		// use kms key id instead of key.Name in case of kms
+		s.Name = fmt.Sprintf("encryption-key-%s-%s-%s", component, "kms", ks.KMSKeyId)
+		s.Data[EncryptionSecretKMSKeyId] = []byte(ks.KMSKeyId)
+
+		kmsConfigJsonData, err := json.Marshal(ks.KMSConfig)
+		if err != nil {
+			return nil, fmt.Errorf("failed to encode kms config with key id %q: %v", ks.KMSKeyId, err)
+		}
+		s.Data[EncryptionSecretKMSConfig] = kmsConfigJsonData
 	}
 
 	return s, nil
