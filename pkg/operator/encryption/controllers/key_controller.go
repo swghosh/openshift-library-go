@@ -196,7 +196,7 @@ func (c *keyController) checkAndCreateKeys(ctx context.Context, syncContext fact
 	var commonReason *string
 	for gr, grKeys := range desiredEncryptionState {
 		// if kmsKeyID in GR ReadKey is not the same as current kmsKeyID, needed is true.
-		ks, needed := needsNewKeyWithInternalReason(grKeys, currentKeyState.Mode, currentKeyState.KMSKeyID, currentKeyState.ExternalReason, encryptedGRs)
+		ks, needed := needsNewKeyWithInternalReason(grKeys, currentKeyState.Mode, currentKeyState.KMSPluginHash, currentKeyState.ExternalReason, encryptedGRs)
 		if !needed {
 			continue
 		}
@@ -270,11 +270,11 @@ func (c *keyController) validateExistingSecret(ctx context.Context, keySecret *c
 		return fmt.Errorf("secret %s/%s is invalid, new keys cannot be created for encryption target", keySecret.Namespace, keySecret.Name)
 	}
 
-	if ks.Mode == state.KMS && ks.KMSKeyID != "" {
+	if ks.Mode == state.KMS && ks.KMSPluginHash != "" {
 		return nil
 	}
 
-	if ks.Mode == state.KMS && ks.KMSKeyID == "" {
+	if ks.Mode == state.KMS && ks.KMSPluginHash == "" {
 		// kmsKeyID is mandatory in case of KMS
 		return fmt.Errorf("secret %s/%s is invalid, new KMS keys cannot be created for encryption target", keySecret.Namespace, keySecret.Name)
 	}
@@ -315,7 +315,7 @@ func (c *keyController) generateKMSKeySecret(kmsConfig *configv1.KMSConfig, inte
 		Mode:           state.KMS,
 		InternalReason: internalReason,
 		ExternalReason: externalReason,
-		KMSKeyID:       kmsKeyID,
+		KMSPluginHash:  kmsKeyID,
 		KMSConfig:      kmsConfig,
 	}
 	return secrets.FromKeyState(c.instanceName, ks)
@@ -351,7 +351,7 @@ func (c *keyController) getCurrentEncryptionModeWithExternalReason(ctx context.C
 
 		ks := state.KeyState{
 			Mode:           state.KMS,
-			KMSKeyID:       kmsKeyID,
+			KMSPluginHash:  kmsKeyID,
 			KMSConfig:      kmsConfig,
 			ExternalReason: reason,
 		}
@@ -412,7 +412,7 @@ func needsNewKeyWithInternalReason(grKeys state.GroupResourceState, currentMode 
 	}
 
 	// if the hash of the kms config (kmsKeyID) has updated, we need a new KMS backing secret
-	if currentMode == state.KMS && latestKey.KMSKeyID != optionalCurrentKMSKeyID {
+	if currentMode == state.KMS && latestKey.KMSPluginHash != optionalCurrentKMSKeyID {
 		latestKey.InternalReason = "kms-config-changed"
 		return latestKey, true
 	}

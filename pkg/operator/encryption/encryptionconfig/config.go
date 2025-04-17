@@ -79,15 +79,20 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 
 		for i, provider := range resourceConfig.Providers {
 			var ks state.KeyState
+			var keyId uint64
 
 			switch {
 			case provider.AESCBC != nil && len(provider.AESCBC.Keys) == 1:
+				keyId, _ = state.NameToKeyID(provider.AESCBC.Keys[0].Name)
+
 				ks = state.KeyState{
 					Key:  provider.AESCBC.Keys[0],
 					Mode: state.AESCBC,
 				}
 
 			case provider.Secretbox != nil && len(provider.Secretbox.Keys) == 1:
+				keyId, _ = state.NameToKeyID(provider.Secretbox.Keys[0].Name)
+
 				ks = state.KeyState{
 					Key:  provider.Secretbox.Keys[0],
 					Mode: state.SecretBox,
@@ -98,6 +103,8 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 				continue
 
 			case provider.AESGCM != nil && len(provider.AESGCM.Keys) == 1:
+				keyId, _ = state.NameToKeyID(provider.AESGCM.Keys[0].Name)
+
 				s := state.AESGCM
 				if provider.AESGCM.Keys[0].Secret == emptyStaticIdentityKey {
 					s = state.Identity
@@ -116,8 +123,8 @@ func ToEncryptionState(encryptionConfig *apiserverconfigv1.EncryptionConfigurati
 				}
 
 				ks = state.KeyState{
-					Mode:     state.KMS,
-					KMSKeyID: extractKMSKeyIdFromProviderName(provider.KMS.Name),
+					Mode:          state.KMS,
+					KMSPluginHash: extractKMSKeyIdFromProviderName(provider.KMS.Name),
 				}
 
 			default:
@@ -210,8 +217,8 @@ func stateToProviders(gr schema.GroupResource, desired state.GroupResourceState)
 			providers = append(providers, apiserverconfigv1.ProviderConfiguration{
 				KMS: &apiserverconfigv1.KMSConfiguration{
 					APIVersion: "v2",
-					Name:       generateKMSProviderName(key.KMSKeyID, gr),
-					Endpoint:   fmt.Sprintf(KMSPluginEndpoint, key.KMSKeyID),
+					Name:       generateKMSProviderName(key.KMSPluginHash, gr),
+					Endpoint:   fmt.Sprintf(KMSPluginEndpoint, key.KMSPluginHash),
 					Timeout: &metav1.Duration{
 						Duration: KMSPluginTimeout,
 					},

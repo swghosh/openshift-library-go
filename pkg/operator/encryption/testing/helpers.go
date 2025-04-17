@@ -25,8 +25,8 @@ const (
 	encryptionSecretMigratedTimestampForTest = "encryption.apiserver.operator.openshift.io/migrated-timestamp"
 	encryptionSecretMigratedResourcesForTest = "encryption.apiserver.operator.openshift.io/migrated-resources"
 
-	encryptionSecretKMSKeyIdDataKeyForTest  = "encryption.apiserver.operator.openshift.io-kms-key-id"
-	encryptionKMSKeyIdValueForTest          = "cloud-foo"
+	encryptionSecretKMSHashKeyForTest       = "encryption.apiserver.operator.openshift.io-kms-plugin-hash"
+	encryptionKMSHashValueForTest           = "cloud-foo"
 	encryptionSecretKMSConfigDataKeyForTest = "encryption.apiserver.operator.openshift.io-kms-config"
 	encryptionKMSConfigJsonValueForTest     = "null" // i.e. refers to an empty KMS config struct
 )
@@ -79,7 +79,7 @@ func CreateEncryptionKeySecretWithRawKeyWithMode(targetNS string, grs []schema.G
 
 func CreateEncryptionKeySecretForKMS(targetNS string, grs []schema.GroupResource, keyID uint64, mode string) *corev1.Secret {
 	secret := CreateEncryptionKeySecretNoDataWithMode(targetNS, grs, keyID, mode)
-	secret.Data[encryptionSecretKMSKeyIdDataKeyForTest] = []byte(encryptionKMSKeyIdValueForTest)
+	secret.Data[encryptionSecretKMSHashKeyForTest] = []byte(encryptionKMSHashValueForTest)
 	secret.Data[encryptionSecretKMSConfigDataKeyForTest] = []byte(encryptionKMSConfigJsonValueForTest)
 	return secret
 }

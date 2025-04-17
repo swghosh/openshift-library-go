@@ -43,10 +43,10 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc",
+						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34,
 					},
 					ReadKeys: []state.KeyState{{
-						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc",
+						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34,
 					}},
 				},
 			},
@@ -75,11 +75,11 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc",
+						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34,
 					},
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
-						{Key: apiserverconfigv1.Key{Name: "33", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
+						{Key: apiserverconfigv1.Key{Name: "33", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 33},
 					},
 				},
 			},
@@ -116,18 +116,18 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc",
+						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34,
 					},
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
 					},
 				},
 				{Group: "", Resource: "configmaps"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc",
+						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34,
 					},
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
 					},
 				},
 			},
@@ -172,20 +172,20 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc",
+						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34,
 					},
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
-						{Key: apiserverconfigv1.Key{Name: "33", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
+						{Key: apiserverconfigv1.Key{Name: "33", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 33},
 					},
 				},
 				{Group: "", Resource: "configmaps"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc",
+						Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34,
 					},
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
-						{Key: apiserverconfigv1.Key{Name: "33", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
+						{Key: apiserverconfigv1.Key{Name: "33", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 33},
 					},
 				},
 			},
@@ -201,7 +201,7 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
 					},
 				},
 			},
@@ -217,12 +217,12 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
 					},
 				},
 				{Group: "", Resource: "configmaps"}: {
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
 					},
 				},
 			},
@@ -252,11 +252,11 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity",
+						Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity", Generation: 35,
 					},
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity"},
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity", Generation: 35},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
 					},
 				},
 			},
@@ -307,21 +307,21 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity",
+						Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity", Generation: 35,
 					},
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity"},
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity", Generation: 35},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
 					},
 				},
 
 				{Group: "", Resource: "configmaps"}: {
 					WriteKey: state.KeyState{
-						Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity",
+						Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity", Generation: 35,
 					},
 					ReadKeys: []state.KeyState{
-						{Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity"},
-						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
+						{Key: apiserverconfigv1.Key{Name: "35", Secret: newFakeIdentityEncodedKeyForTest()}, Mode: "identity", Generation: 35},
+						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc", Generation: 34},
 					},
 				},
 			},
@@ -381,12 +381,12 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Mode:      state.KMS,
-						KMSKeyID:  "cloud-foo",
-						KMSConfig: nil,
+						Mode:          state.KMS,
+						KMSPluginHash: "cloud-foo",
+						KMSConfig:     nil,
 					},
 					ReadKeys: []state.KeyState{
-						{Mode: state.KMS, KMSKeyID: "cloud-foo", KMSConfig: nil},
+						{Mode: state.KMS, KMSPluginHash: "cloud-foo", KMSConfig: nil},
 					},
 				},
 			},
@@ -412,13 +412,13 @@ func TestToEncryptionState(t *testing.T) {
 			output: map[schema.GroupResource]state.GroupResourceState{
 				{Group: "", Resource: "secrets"}: {
 					WriteKey: state.KeyState{
-						Mode:      state.KMS,
-						KMSKeyID:  "cloud-foo",
-						KMSConfig: nil,
+						Mode:          state.KMS,
+						KMSPluginHash: "cloud-foo",
+						KMSConfig:     nil,
 					},
 					ReadKeys: []state.KeyState{
 						{Key: apiserverconfigv1.Key{Name: "34", Secret: "MTcxNTgyYTBmY2Q2YzVmZGI2NWNiZjVhM2U5MjQ5ZDc="}, Mode: "aescbc"},
-						{Mode: state.KMS, KMSKeyID: "cloud-foo", KMSConfig: nil},
+						{Mode: state.KMS, KMSPluginHash: "cloud-foo", KMSConfig: nil},
 					},
 				},
 			},
